@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <link href="components/bootstrap/css/bootstrap.min.css" rel="stylesheet"></link>
+    <link href="style.css" rel="stylesheet"></link>
+    <link href="voice.css" rel="stylesheet"></link>
+</head>
+<body>
+
+
+    <!-- voice control pannel -->
+    <div>
+        <div id="voice-control">
+            <h1 class="center" id="headline">
+                Voice Control
+            </h1>
+            <div id="info">
+              <p id="info_start">Click on the microphone icon and begin speaking.</p>
+              <p id="info_speak_now">Speak now.</p>
+              <p id="info_no_speech">No speech was detected. You may need to adjust your
+                <a href="//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892">
+                  microphone settings</a>.</p>
+              <p id="info_no_microphone" style="display:none">
+                No microphone was found. Ensure that a microphone is installed and that
+                <a href="//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892">
+                microphone settings</a> are configured correctly.</p>
+              <p id="info_allow">Click the "Allow" button above to enable your microphone.</p>
+              <p id="info_denied">Permission to use microphone was denied.</p>
+              <p id="info_blocked">Permission to use microphone is blocked. To change,
+                go to chrome://settings/contentExceptions#media-stream</p>
+              <p id="info_upgrade">Web Speech API is not supported by this browser.
+                 Upgrade to <a href="//www.google.com/chrome">Chrome</a>
+                 version 25 or later.</p>
+            </div>
+            <div class="right">
+              <button id="start_button" onclick="startButton(event)">
+                <img id="start_img" src="mic.gif" alt="Start"></button>
+            </div>
+            <div id="results">
+              <span id="final_span" class="final"></span>
+              <span id="interim_span" class="interim"></span>
+              <p>
+            </div>
+            <div class="center alert alert-info">
+            <b>Drone:</b> <span id="drone-message">Ready!<span>
+            </div>
+            <div class="center">
+            <!--
+              <div class="sidebyside" style="text-align:right">
+                <button id="copy_button" class="button" onclick="copyButton()">
+                  Copy and Paste</button>
+                <div id="copy_info" class="info">
+                  Press Control-C to copy text.<br>(Command-C on Mac.)
+                </div>
+              </div>
+              <div class="sidebyside">
+                <button id="email_button" class="button" onclick="emailButton()">
+                  Create Email</button>
+                <div id="email_info" class="info">
+                  Text sent to default email application.<br>
+                  (See chrome://settings/handlers to change.)
+                </div>
+              </div>
+              -->
+              <p>
+              <div id="div_language">
+                <select id="select_language" onchange="updateCountry()"></select>
+                &nbsp;&nbsp;
+                <select id="select_dialect"></select>
+              </div>
+            </div>
+        </div>
+
+        <div >
+            <div class="buttons">
+        <div class="btn-toolbar">
+            <div class="input-append btn-group">
+                <button class="btn btn-success" data-action="drone" data-param="takeoff"><i class="icon-play icon-white"></i> takeoff</button>
+                <button class="btn btn-warning" data-action="drone" data-param="land"><i class="icon-stop icon-white"></i> land</button>
+                <button class="btn btn-danger" data-action="drone" data-param="disableEmergency"><i class="icon-wrench icon-white"></i> recover</button>            
+            </div>
+            <div class="input-append btn-group">
+                <button class="btn dropdown-toggle" data-toggle="dropdown">Animations <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li data-action="animate" data-param="phiM30Deg"><a href="#">phiM30Deg</a></li>
+                    <li data-action="animate" data-param="phi30Deg"><a href="#">phi30Deg</a></li>
+                    <li data-action="animate" data-param="thetaM30Deg"><a href="#">thetaM30Deg</a></li>
+                    <li data-action="animate" data-param="theta30Deg"><a href="#">theta30Deg</a></li>
+                    <li data-action="animate" data-param="theta20degYaw200deg"><a href="#">theta20degYaw200deg</a></li>
+                    <li data-action="animate" data-param="theta20degYawM200deg"><a href="#">theta20degYawM200deg</a></li>
+                    <li data-action="animate" data-param="turnaround"><a href="#">turnaround</a></li>
+                    <li data-action="animate" data-param="turnaroundGodown"><a href="#">turnaroundGodown</a></li>
+                    <li data-action="animate" data-param="yawShake"><a href="#">yawShake</a></li>
+                    <li data-action="animate" data-param="yawDance"><a href="#">yawDance</a></li>
+                    <li data-action="animate" data-param="phiDance"><a href="#">phiDance</a></li>
+                    <li data-action="animate" data-param="thetaDance"><a href="#">thetaDance</a></li>
+                    <li data-action="animate" data-param="vzDance"><a href="#">vzDance</a></li>
+                    <li data-action="animate" data-param="wave"><a href="#">wave</a></li>
+                    <li data-action="animate" data-param="phiThetaMixed"><a href="#">phiThetaMixed</a></li>
+                    <li data-action="animate" data-param="doublePhiThetaMixed"><a href="#">doublePhiThetaMixed</a></li>
+                    <li data-action="animate" data-param="flipAhead"><a href="#">flipAhead</a></li>
+                    <li data-action="animate" data-param="flipBehind"><a href="#">flipBehind</a></li>
+                    <li data-action="animate" data-param="flipLeft"><a href="#">flipLeft</a></li>
+                    <li data-action="animate" data-param="flipRight"><a href="#">flipRight</a></li>
+                </ul>                   
+                    <input class="span1" id="duration" size="3" type="number" value="2" rel="tooltip" data-placement="bottom" title="Trigger animations. You can change the duration of an animation. It defaults to 2 seconds."> <span class="add-on"><i class="icon-time"></i></span>
+            </div>                
+        </div>    
+    </div>
+            <div id="batteryProgress" class="progress progress-success progress-striped" title="Battery status" rel="tooltip" data-placement="right">
+                <div class="bar" id="batterybar" style="width: 100%;"></div>
+            </div>       
+            <img id="cam" src="default.jpg" />
+            <div class="buttons">
+                <div class="btn-toolbar">
+                    <div class="btn-group">
+                        <button class="btn" data-action="move" data-param="front"><i class="icon-arrow-up"></i> Front</button>
+                        <button class="btn" data-action="move" data-param="back"><i class="icon-arrow-down"></i> Back</button>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn" data-action="move" data-param="left"><i class="icon-arrow-left"></i> Left</button>
+                        <button class="btn" data-action="move" data-param="right"><i class="icon-arrow-right"></i> Right</button>
+                    </div>
+                </div>
+                <div class="btn-toolbar">
+                    <div class="btn-group">
+                        <button class="btn" data-action="move" data-param="up"><i class="icon-chevron-up"></i> Up</button>
+                        <button class="btn" class="btn" data-action="move" data-param="down"><i class="icon-chevron-down"></i> Down</button>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn" data-action="move" data-param="clockwise"><i class="icon-refresh"></i> clockwise</button>
+                        <button class="btn" data-action="move" data-param="counterClockwise"><i class="icon-refresh"></i> counter-clockwise</button>
+                    </div>
+                </div>
+            </div>
+            <div id="stats">     
+                <div>Battery: <span id="batteryPercentage">(Drone not connected)</span>%</div>
+                <div>Direction: <span id="clockwiseDegrees"></span>°</div>
+                <div>front/back: <span id="frontBackDegrees"></span>°</div>
+                <div>left/right: <span id="leftRightDegrees"></span>°</div>
+                <div>Altitude: <span id="altitudeMeters"></span>m</div>
+                <div>Velocity (x/y/z): <span id="xVelocity"></span> / <span id="yVelocity"></span> / <span id="zVelocity"></span></div>
+            </div>
+        </div>
+    </div>
+    <script src="components/jquery/jquery.js"></script>
+    <script src="/faye/client.js"></script>
+    <script src="components/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://sdk.clarifai.com/js/clarifai-2.0.9.js"></script>
+    <script src="/client.js"></script>
+    <script src="/voice.js"></script>
+</body>
+</html>

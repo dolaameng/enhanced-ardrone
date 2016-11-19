@@ -1,0 +1,30 @@
+body {
+     font-family: sans-serif;
+     margin: 15px;
+}
+#cam {
+    margin: 0 auto;
+    display: block;
+    border-radius: 5px;
+    border: 3px #050 solid;
+    width: 640px;
+    height: 360px;
+}
+#batteryProgress {
+	width: 640px;
+	margin: 0 auto;
+	margin-bottom: 10px;
+}
+#stats {
+    float: right;
+    margin: 50px;
+    bottom: 20px; 
+    left: 200px;
+    font-size: 11px;
+}
+.buttons {
+    text-align: center;
+}
+.dropdown-menu {
+    text-align: left;
+}
