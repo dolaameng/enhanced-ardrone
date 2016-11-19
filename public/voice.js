@@ -1,4 +1,6 @@
+// faye framework
 var faye;
+var camSrc;
 faye = new Faye.Client("/faye", {
   timeout: 120
 });
@@ -9,10 +11,14 @@ faye.subscribe("/drone/navdata", function(data) {
   return showBatteryStatus(data.demo.batteryPercentage);
 });
 faye.subscribe("/drone/image", function(src) {
-    return $("#cam").attr({
-      src: src
-    });
-  });
+    camSrc = src;
+});
+
+// clarifai api
+var cvApp = new Clarifai.App(
+    CLIENT_ID,
+    CLIENT_SECRET
+);
 
 
 var langs =
@@ -183,39 +189,80 @@ if (!('webkitSpeechRecognition' in window)) {
   };
 }
 
+function getBase64Image(img) {
+  // Create an empty canvas element
+    var canvas = document.getElementById("camcanvas");
+    // canvas.width = img.width;
+    // canvas.height = img.height;
+
+    // Copy the image contents to the canvas
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+
+    // Get the data-URL formatted image
+    // Firefox supports PNG and JPEG. You could check img.src to
+    // guess the original format, but be aware the using "image/jpg"
+    // will re-encode the image.
+    var dataURL = canvas.toDataURL("image/png");
+
+    return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+}
+
 function voiceCommand(text) {
   text = text.toLowerCase();
   var drone_message = document.getElementById("drone-message");
   if (text.search(/take off|起飞/i) !== -1) {
     drone_message.innerHTML = "I will takeoff!";
-    return faye.publish("/drone/drone", {
+    faye.publish("/drone/drone", {
       action: "takeoff",
       speed: 0.05,
       duration: 1000
     });
-    // faye.publish("/drone/move", {
-    //   action: "takeoff",
-    //   speed: void 0
-    // });
-  } else if (text.search(/land|降落/i) !== -1) {
+    return faye.publish("/drone/move", {
+      action: "takeoff",
+      speed: void 0
+    });
+  } else if (text.search(/land|落/i) !== -1) {
     drone_message.innerHTML = "I will land!";
-    return faye.publish("/drone/drone", {
+    faye.publish("/drone/drone", {
       action: "land",
       speed: 0.05,
-      duration: 1000
+      duration: 2000
     });
-    // faye.publish("/drone/move", {
-    //   action: "land",
-    //   speed: void 0
-    // });
+    return faye.publish("/drone/move", {
+      action: "land",
+      speed: void 0
+    });
   } else if (text.search(/left|左/i) !== -1) {
     drone_message.innerHTML = "Moving left!";
   } else if (text.search(/right|右/i) !== -1) {
     drone_message.innerHTML = "Moving Right!";
   } else if (text.search(/see|看/i) !== -1) {
-    drone_message.innerHTML = "I see stuff!";
+    var img64 = getBase64Image(document.getElementById("cam"));
+    //console.log(img64);
+    drone_message.innerHTML = "I am thinking!";
+    cvApp.models.predict(Clarifai.GENERAL_MODEL,
+    {
+      "base64": img64
+    }).then(
+      function(response) {
+        var concepts = response["data"]["outputs"][0]["data"]["concepts"];
+        var seen = "";
+        for (var i = 0; i < 5; ++i) {
+          if (i > 0) {
+            seen += ", "
+          }
+          seen += concepts[i]["name"] + "(" + concepts[i]["value"] + ")";
+        }
+        drone_message.innerHTML = "I see " + seen;
+      },
+      function(err) {
+        drone_message.innerHTML = "I don't understand what I see.";
+      }
+    );
+    drone_message.innerHTML = "I am asking Clarifai, please be patient...";
+    return;
   }
-  //TODO:
 }
 
 function upgrade() {
