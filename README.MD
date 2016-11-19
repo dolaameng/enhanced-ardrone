@@ -25,3 +25,6 @@ I was piping up different APIs. Credits are to the original writers.
 - [google speech recognition API](https://github.com/GoogleChrome/webplatform-samples/tree/master/webspeechdemo) for speech control
 - [drone-browser](https://github.com/functino/drone-browser) for the frontend and drone communication
 - [clarifai api](https://github.com/Clarifai/clarifai-javascript) for computer vision - it is a little slow in my experiment, I haven't fingered out if it is because I have a free account.
+
+# youtube video
+[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=X9nEhS5XSRA)
